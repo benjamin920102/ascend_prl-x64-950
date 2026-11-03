@@ -9,7 +9,7 @@ on:
       cann_toolkit_url:
         description: 'Official Linux x86_64 CANN toolkit URL'
         required: true
-        default: 'https://ascend.devcloud.huaweicloud.com/cann/run/software/9.0.0/x86_64/Ascend-cann-toolkit_9.0.0_linux-x86_64.run'
+        default: 'https://ascend.devcloud.huaweicloud.com/artifactory/cann-run-mirror/software/legacy/20260422000325096/Ascend-cann-toolkit_9.0.0_linux-x86_64.run'
         type: string
       cann_toolkit_sha256:
         description: 'Expected toolkit SHA256 (obtain independently from the distributor)'

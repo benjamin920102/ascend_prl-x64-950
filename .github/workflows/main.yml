@@ -1,0 +1,69 @@
+name: Build x64 Ascend 950 prerelease
+on:
+  workflow_dispatch:
+    inputs:
+      pearl_ref:
+        description: 'Pearl dependency revision (prefer a verified full commit SHA)'
+        required: true
+        type: string
+      cann_toolkit_url:
+        description: 'Official Linux x86_64 CANN toolkit URL'
+        required: true
+        default: 'https://ascend.devcloud.huaweicloud.com/cann/run/software/9.0.0/x86_64/Ascend-cann-toolkit_9.0.0_linux-x86_64.run'
+        type: string
+      cann_toolkit_sha256:
+        description: 'Expected toolkit SHA256 (obtain independently from the distributor)'
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc g++ make cmake git curl clang pkg-config wget python3 zlib1g-dev libssl-dev
+      - name: Install Rust toolchain
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+      - name: Fetch dependencies
+        env:
+          PEARL_REF: ${{ inputs.pearl_ref }}
+        run: bash scripts/fetch_deps.sh
+      - name: Install CANN development toolkit
+        env:
+          CANN_TOOLKIT_URL: ${{ inputs.cann_toolkit_url }}
+          CANN_TOOLKIT_SHA256: ${{ inputs.cann_toolkit_sha256 }}
+        run: |
+          [[ "$CANN_TOOLKIT_URL" == https://* ]]
+          [[ "$CANN_TOOLKIT_SHA256" =~ ^[0-9a-fA-F]{64}$ ]]
+          curl -fL "$CANN_TOOLKIT_URL" -o "$RUNNER_TEMP/cann-toolkit.run"
+          printf '%s  %s\n' "$CANN_TOOLKIT_SHA256" "$RUNNER_TEMP/cann-toolkit.run" | sha256sum -c -
+          bash "$RUNNER_TEMP/cann-toolkit.run" --install --quiet
+      - name: Verify CPU backend and build
+        run: |
+          bash scripts/check_cpu.sh
+          bash scripts/build.sh NPU_ARCH=dav-3510 RANK=128
+          file build/*
+          readelf -h build/ascend_prl_kryptex | grep 'Advanced Micro Devices X86-64'
+          cp vendor/DEPENDENCY_REVISIONS.txt build/
+      - name: Package build output
+        run: |
+          tar -czf build-x86_64-ascend950.tar.gz -C build .
+          sha256sum build-x86_64-ascend950.tar.gz > build-x86_64-ascend950.tar.gz.sha256
+      - name: Create prerelease
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pre-release-${{ github.run_number }}-${{ github.run_attempt }}
+          name: x64 Ascend 950 build ${{ github.run_number }}
+          prerelease: true
+          files: |
+            build-x86_64-ascend950.tar.gz
+            build-x86_64-ascend950.tar.gz.sha256

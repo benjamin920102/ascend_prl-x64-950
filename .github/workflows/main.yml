@@ -1,12 +1,7 @@
 name: Build x64 Ascend 950 prerelease
 on:
   workflow_dispatch:
-    inputs:
-      cann_toolkit_url:
-        description: 'Official Linux x86_64 CANN toolkit URL'
-        required: true
-        default: 'https://ascend.devcloud.huaweicloud.com/artifactory/cann-run-mirror/software/legacy/20260422000325096/Ascend-cann-toolkit_9.0.0_linux-x86_64.run'
-        type: string
+
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -29,13 +24,14 @@ jobs:
         env:
           PEARL_REF: master
         run: bash scripts/fetch_deps.sh
-      - name: Install CANN development toolkit
-        env:
-          CANN_TOOLKIT_URL: ${{ inputs.cann_toolkit_url }}
+      - name: Download and Install Ascend CANN Toolkit
         run: |
-          [[ "$CANN_TOOLKIT_URL" == https://* ]]
-          curl -fL "$CANN_TOOLKIT_URL" -o "$RUNNER_TEMP/cann-toolkit.run"
-          bash "$RUNNER_TEMP/cann-toolkit.run" --install --quiet
+          wget -q https://ascend.devcloud.huaweicloud.com/artifactory/cann-run-mirror/software/legacy/20260422000325096/Ascend-cann-toolkit_9.0.0_linux-x86_64.run
+          chmod +x Ascend-cann-toolkit_9.0.0_linux-x86_64.run
+          bash ./Ascend-cann-toolkit_9.0.0_linux-x86_64.run --install --quiet
+          sudo su -c "
+            rustup default stable
+          "
       - name: Verify CPU backend and build
         run: |
           bash scripts/check_cpu.sh

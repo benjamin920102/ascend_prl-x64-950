@@ -27,7 +27,7 @@ jobs:
           rustup default stable
       - name: Fetch dependencies
         env:
-          PEARL_REF: main
+          PEARL_REF: master
         run: bash scripts/fetch_deps.sh
       - name: Install CANN development toolkit
         env:

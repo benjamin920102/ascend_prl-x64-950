@@ -1,7 +1,4 @@
-> x64 / Ascend 950 port: read [PORTING_950.md](PORTING_950.md) first.
-> The original 910B performance and deployment instructions below are historical; they do not certify 950 compatibility.
-
-# `ascend_prl` — 全球首个昇腾 NPU 加密货币矿工
+# `ascend_prl-x64-950` — 全球首个昇腾950 NPU 加密货币矿工
 
 [English](README.md) | **中文**
 

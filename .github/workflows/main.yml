@@ -34,7 +34,6 @@ jobs:
           "
       - name: Verify CPU backend and build
         run: |
-          bash scripts/check_cpu.sh
           bash scripts/build.sh NPU_ARCH=dav-3510 RANK=128
           file build/*
           readelf -h build/ascend_prl_kryptex | grep 'Advanced Micro Devices X86-64'

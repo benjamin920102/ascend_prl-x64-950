@@ -1,3 +1,5 @@
+> **Ascend 950 SSBuffer/MIX 版本：** 預設已改為 `MIX_950=ON`，新增 `kernel/pearl_hlc2_mix.asc`。此版為**尚未經 CANN 編譯或 950 實機驗證**的原始碼修改，使用前請先閱讀 [README_950_SSBUFFER.md](README_950_SSBUFFER.md)，並做 transcript/hit 一致性驗證。
+
 # `ascend_prl-x64-950` — 全球首个昇腾950 NPU 加密货币矿工
 
 [English](README.md) | **中文**

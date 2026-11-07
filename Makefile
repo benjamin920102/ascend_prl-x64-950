@@ -16,6 +16,8 @@ NFOLD := 32
 MDIM ?= 16384
 # Host strip slots (separate from kernel BUFS). Use 2 for an A/B baseline.
 PIPE_DEPTH ?= 4
+# Set to OFF to build the unchanged, separate-stream Cube/Vector baseline.
+MIX_950 ?= ON
 
 OUT  := build
 # Locate BLAKE3 C sources from the Cargo registry when building the standalone miner.
@@ -64,7 +66,7 @@ guard: $(OUT)
 
 kernel: $(OUT)
 	cd kernel && rm -rf build && mkdir build && cd build && \
-	  cmake -DCMAKE_ASC_RUN_MODE=npu -DCMAKE_ASC_ARCHITECTURES=$(NPU_ARCH) \
+	  cmake -DCMAKE_ASC_RUN_MODE=npu -DCMAKE_ASC_ARCHITECTURES=$(NPU_ARCH) -DPEARL_950_MIX=$(MIX_950) \
 	        -DPEARL_PIPE_DEPTH=$(PIPE_DEPTH) -DNINNER=$(NINNER) -DNFOLD=$(NFOLD) -DBUFS=4 -DVEC2X=$(VEC2X) -DPEARL_GRID=$(GRID) \
 	        -DCMAKE_MODULE_PATH="$$ASC_MODULES" .. && make -j
 	cp kernel/build/libpearl_hlc2.so $(OUT)/

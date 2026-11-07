@@ -1,3 +1,5 @@
+> **Ascend 950 MIX + SSBuffer source port:** this ZIP defaults to `MIX_950=ON` on `dav-3510` and includes `kernel/pearl_hlc2_mix.asc`. **Not yet compiled or hardware-verified.** Please read [README_950_SSBUFFER.md](README_950_SSBUFFER.md) and validate transcript/hit equivalence before production use.
+
 # `ascend_prl-x64-950` — the world's first Ascend 950 NPU cryptocurrency miner
 
 [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)

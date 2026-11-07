@@ -10,7 +10,20 @@ set(PEARL_PIPE_DEPTH "4" CACHE STRING "host strip queue depth")
 set(BUFS "4" CACHE STRING "slot ping-pong depth")
 set(BACKOFF "500" CACHE STRING "spin backoff iters")
 set(VEC2X "2" CACHE STRING "vec consumers per cube producer")
-add_library(pearl_hlc2 SHARED pearl_hlc2_cube.asc pearl_hlc2_vec.asc)
+# Enable 950-only, self-contained MIX(1,2) SSBuffer path by default.
+# Off restores the unchanged reference implementation for differential checking.
+option(PEARL_950_MIX "Use 950 MIX(1,2) SSBuffer hardware synchronization" ON)
+if(PEARL_950_MIX)
+    if(NOT CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")
+        message(FATAL_ERROR "PEARL_950_MIX requires dav-3510 (Ascend 950PR/950DT)")
+    endif()
+    if(NOT VEC2X STREQUAL "2")
+        message(FATAL_ERROR "PEARL_950_MIX requires VEC2X=2")
+    endif()
+    add_library(pearl_hlc2 SHARED pearl_hlc2_mix.asc)
+else()
+    add_library(pearl_hlc2 SHARED pearl_hlc2_cube.asc pearl_hlc2_vec.asc)
+endif()
 set_target_properties(pearl_hlc2 PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_link_libraries(pearl_hlc2 PRIVATE tiling_api register platform m dl pthread)
 target_compile_options(pearl_hlc2 PRIVATE
@@ -23,3 +36,7 @@ target_compile_options(pearl_hlc2 PRIVATE
     $<$<COMPILE_LANGUAGE:ASC>:-DBACKOFF=${BACKOFF}>
     $<$<COMPILE_LANGUAGE:ASC>:-DVEC2X=${VEC2X}>
 )
+
+if(PEARL_950_MIX)
+    target_compile_definitions(pearl_hlc2 PRIVATE ENABLE_CV_COMM_VIA_SSBUF=true)
+endif()

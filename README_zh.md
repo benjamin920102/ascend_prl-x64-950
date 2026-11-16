@@ -1,4 +1,4 @@
-> **Ascend 950 SSBuffer/MIX 版本：** 預設已改為 `MIX_950=ON`，新增 `kernel/pearl_hlc2_mix.asc`。此版為**尚未經 CANN 編譯或 950 實機驗證**的原始碼修改，使用前請先閱讀 [README_950_SSBUFFER.md](README_950_SSBUFFER.md)，並做 transcript/hit 一致性驗證。
+> **Ascend 950 Cube→Vector 片上直連版：** `MIX_950=ON` 已改為 `asc_copy_l0c2ub` 寫入 AIV UB 雙緩衝，移除 GM 中間矩陣環形緩衝區，保留原生 XOR。此 ZIP **未編譯、未實測且未執行測試**；細節請參閱 [README_950_SSBUFFER.md](README_950_SSBUFFER.md)。
 
 # `ascend_prl-x64-950` — 全球首个昇腾950 NPU 加密货币矿工
 

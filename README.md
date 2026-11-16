@@ -1,4 +1,4 @@
-> **Ascend 950 MIX + SSBuffer source port:** this ZIP defaults to `MIX_950=ON` on `dav-3510` and includes `kernel/pearl_hlc2_mix.asc`. **Not yet compiled or hardware-verified.** Please read [README_950_SSBUFFER.md](README_950_SSBUFFER.md) and validate transcript/hit equivalence before production use.
+> **Ascend 950 DIRECT L0C→UB edition:** `MIX_950=ON` now routes Cube output via on-chip `asc_copy_l0c2ub` into ping/pong AIV UB, not a GM partial ring. Native vector XOR remains. Source-only, **not compiled or tested**. See [README_950_SSBUFFER.md](README_950_SSBUFFER.md).
 
 # `ascend_prl-x64-950` — the world's first Ascend 950 NPU cryptocurrency miner
 

@@ -10,9 +10,9 @@ set(PEARL_PIPE_DEPTH "4" CACHE STRING "host strip queue depth")
 set(BUFS "4" CACHE STRING "slot ping-pong depth")
 set(BACKOFF "500" CACHE STRING "spin backoff iters")
 set(VEC2X "2" CACHE STRING "vec consumers per cube producer")
-# Enable 950-only, self-contained MIX(1,2) SSBuffer path by default.
+# 950-only MIX(1,2) direct L0C->UB: C API MMAD + FIX, mode-4 READY/ACK.
 # Off uses the separate cube/vector path, also updated to native vector XOR.
-option(PEARL_950_MIX "Use 950 MIX(1,2) SSBuffer hardware synchronization" ON)
+option(PEARL_950_MIX "Use 950 MIX(1,2) L0C-to-AIV-UB direct path" ON)
 if(PEARL_950_MIX)
     if(NOT CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")
         message(FATAL_ERROR "PEARL_950_MIX requires dav-3510 (Ascend 950PR/950DT)")

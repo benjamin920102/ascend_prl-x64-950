@@ -26,9 +26,9 @@ jobs:
         run: bash scripts/fetch_deps.sh
       - name: Download and Install Ascend CANN Toolkit
         run: |
-          wget -q https://ascend.devcloud.huaweicloud.com/artifactory/cann-run-mirror/software/legacy/20260422000325096/Ascend-cann-toolkit_9.0.0_linux-x86_64.run
-          chmod +x Ascend-cann-toolkit_9.0.0_linux-x86_64.run
-          bash ./Ascend-cann-toolkit_9.0.0_linux-x86_64.run --install --quiet
+          wget -q https://ascend.devcloud.huaweicloud.com/artifactory/cann-run-mirror/software/legacy/20260720000024864/Ascend-cann-toolkit_9.1.0_linux-x86_64.run
+          chmod +x Ascend-cann-toolkit_9.1.0_linux-x86_64.run
+          bash ./Ascend-cann-toolkit_9.1.0_linux-x86_64.run --install --quiet
           sudo su -c "
             rustup default stable
           "

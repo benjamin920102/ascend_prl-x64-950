@@ -11,7 +11,7 @@ set(BUFS "4" CACHE STRING "slot ping-pong depth")
 set(BACKOFF "500" CACHE STRING "spin backoff iters")
 set(VEC2X "2" CACHE STRING "vec consumers per cube producer")
 # Enable 950-only, self-contained MIX(1,2) SSBuffer path by default.
-# Off restores the unchanged reference implementation for differential checking.
+# Off uses the separate cube/vector path, also updated to native vector XOR.
 option(PEARL_950_MIX "Use 950 MIX(1,2) SSBuffer hardware synchronization" ON)
 if(PEARL_950_MIX)
     if(NOT CMAKE_ASC_ARCHITECTURES STREQUAL "dav-3510")

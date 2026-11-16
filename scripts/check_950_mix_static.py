@@ -19,7 +19,7 @@ assert 'g_prodF' not in mix and 'g_consF' not in mix
 assert 'g_sV' not in mix and 'dcci(' in mix # hit DCache writeback remains
 assert 'g_sV' in refc and 'g_prodF' in refc
 
-# Fold/XOR and BLAKE3 implementation should be copied without changes:
+# Native vector XOR wrapper and scalar BLAKE3 should match in both paths:
 start='__aicore__ inline void XorVec('
 end='// 3KB SSBuffer is shared only within this one MIX(1,2) task.'
 # Ignore the comments before XorVec and BLAKE3 helper; verify full section.
@@ -63,5 +63,5 @@ for grid in (1, 2, 5, 20, 31):
                     consumed.add(band)
         assert produced == consumed == set(range(n)), (grid, n)
 
-print('PASS: source invariants, original BLAKE3/SIMD helper equivalence, and 5*259 symbolic ring/ACK cases')
+print('PASS: source invariants, shared native-XOR/BLAKE3 helper equivalence, and 5*259 symbolic ring/ACK cases')
 print('NOTE: No CANN compile, device execution, or SSBuffer collision validation performed.')

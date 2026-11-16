@@ -10,10 +10,10 @@
 - The AIC writes **32-byte** SSBuffer descriptors containing `(sequence, ring slot, band, NFOLD)` for each band, occupying `BUFS * 32B`, starting at SSBuffer offset **2048B**. This is a user-defined layout; CANN does **not** guarantee the rest of SSBuffer is free. Audit Matmul internals for each CANN build.
 - `CrossCoreSetFlag<4, PIPE_S>`/`CrossCoreWaitFlag<4, PIPE_S>` perform AIC→AIV READY and AIV→AIC ACK. For AIV0, AIC uses IDs 0 (READY) and 1 (ACK). For AIV1, AIC uses 16 (READY) and 17 (ACK). Each AIV uses 0 for READY and 1 for ACK.
 - `IterateAll<true>` completes all 32 GM matrix partials before AIC publishes READY. AIV acknowledges its slot after the last GM→UB copy is synchronized via MTE2_S; hashing proceeds independently.
-- The GM partial ring, exact Folding/XOR/BLAKE3 helper implementations, transcript layout, result ABI and B double buffering are retained. Removed **only** the new default path's GM producer/consumer flag allocations, flag resets, and `dcci`-based hot polling. Result writeback still calls `dcci`.
+- The GM partial ring, folding data layout, scalar BLAKE3 compression, transcript layout, result ABI and partial-load double buffering are retained. Folding XOR now uses native Ascend 950 `AscendC::BitwiseXor` with UB ping-pong to avoid unsupported in-place aliasing. Removed **only** the new default path's GM producer/consumer flag allocations, flag resets, and `dcci`-based hot polling. Result writeback still calls `dcci`.
 - Removed speculative next-band prefetch: a point-to-point hardware READY cannot be safely peeked without consuming it.
 - All strip launches now run on **one device stream**. This avoids cross-stream reorder hazards but also removes old cross-strip Cube(i+1)/Vector(i) overlap; benchmark both.
-- Unmodified reference files `pearl_hlc2_cube.asc` and `pearl_hlc2_vec.asc` remain in the ZIP; compile with `MIX_950=OFF` to get the original implementation.
+- The separate cube/vector fallback remains available with `MIX_950=OFF`; its vector XOR has been updated to the same native implementation.
 
 ## Build
 
@@ -40,7 +40,7 @@ make miner
 python3 scripts/check_950_mix_static.py
 ```
 
-The static checker verifies required source/compile options, bit-for-bit equality of the original SIMD/BLAKE3 helper bodies (with comments/whitespace ignored), and symbolic AIC/AIV ring slot/credit pairing for 5 grid sizes × 259 band counts. **This does not compile Ascend C, measure TH/s, or prove NPU memory ordering.**
+The static checker verifies required source/compile options, source equivalence of the updated native-XOR/BLAKE3 helper bodies (with comments/whitespace ignored), and symbolic AIC/AIV ring slot/credit pairing for 5 grid sizes × 259 band counts. **This does not compile Ascend C, measure TH/s, or prove NPU memory ordering.**
 
 ## Required NPU verification before use
 

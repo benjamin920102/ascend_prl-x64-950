@@ -2,10 +2,15 @@
 
 use blake3::CHUNK_LEN;
 use pearl_blake3::MerkleTree;
-use zk_pow::ffi::plain_proof::{MatrixMerkleProof, PlainProof};
+// The miner emits the Int7 PlainProof wire format used by certificates v1–v3.
+use zk_pow::v2::{
+    api::proof::{MMAType, MiningConfiguration, PeriodicPattern},
+    ffi::plain_proof::{MatrixMerkleProof, PlainProof},
+};
 
 fn leaf_indices_from_rows(rows: &[usize], cols: usize) -> Vec<usize> {
-    MerkleTree::compute_leaf_indices_from_rows(rows, (0, cols))
+    MerkleTree::compute_leaf_indices_from_rows(rows, (0, cols), CHUNK_LEN)
+        .expect("1024-byte Merkle chunks are supported")
 }
 
 fn matrix_proof(data: &[u8], key: [u8; 32], rows: &[usize], cols: usize) -> MatrixMerkleProof {
@@ -36,7 +41,6 @@ pub unsafe extern "C" fn hash_key(
     n_cols: usize,
     out: *mut u8,
 ) -> i32 {
-    use zk_pow::api::proof::{MMAType, MiningConfiguration, PeriodicPattern};
     let rows: Vec<u32> = std::slice::from_raw_parts(rows_pat, n_rows)
         .iter().map(|&v| v as u32).collect();
     let cols: Vec<u32> = std::slice::from_raw_parts(cols_pat, n_cols)

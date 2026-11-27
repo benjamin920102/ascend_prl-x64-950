@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-: "${PEARL_REF:?Set PEARL_REF to the Pearl revision compatible with your pool/proof format}"
+# This revision provides the versioned Int7 APIs used by proof-ffi.
+PEARL_REF="${PEARL_REF:-adbfbbac351311859f7f662060f40ef6e57fe109}"
 BLAKE3_REF="${BLAKE3_REF:-df610ddc3b93841ffc59a87e3da659a15910eb46}"
 fetch() {
   local url=$1 dest=$2 ref=$3
